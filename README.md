@@ -4,19 +4,20 @@ A comprehensive church management system built with PHP, HTML, CSS, and MySQL fo
 
 ## 🚀 Features
 
-- **Member Management**: Add, edit, delete, and view church members
-- **Attendance Tracking**: Record and monitor weekly meeting attendance
-- **Birthday Management**: Track upcoming birthdays and monthly birthday lists
-- **Secure Authentication**: Admin login with session management
-- **Responsive Design**: Mobile-friendly interface
-- **Modern UI**: Clean and intuitive user interface
+- **🔐 Secure Authentication**: Admin login with session management and password hashing
+- **👥 Member Management**: Add, edit, delete, and view church members with search/filter
+- **📊 Attendance Tracking**: Create meetings, record attendance, and view detailed reports
+- **🎂 Birthday Management**: Track upcoming birthdays, monthly views, and age calculations
+- **📱 Responsive Design**: Mobile-friendly interface with modern UI
+- **📈 Statistics Dashboard**: Overview of members, attendance, and birthdays
+- **📤 Export Features**: Export data to CSV and print reports
 
 ## 🛠️ Technology Stack
 
 - **Backend**: PHP 7.4+
 - **Database**: MySQL 5.7+
 - **Frontend**: HTML5, CSS3, Bootstrap 5
-- **JavaScript**: Vanilla JS for DOM manipulation
+- **JavaScript**: Vanilla JS for DOM manipulation and interactivity
 
 ## 📁 Project Structure
 
@@ -24,23 +25,34 @@ A comprehensive church management system built with PHP, HTML, CSS, and MySQL fo
 CMSA/
 ├── assets/
 │   ├── css/
-│   │   └── style.css
+│   │   └── style.css          # Main stylesheet with modern design
 │   └── js/
-│       └── main.js
+│       └── main.js            # JavaScript functionality
 ├── config/
-│   └── database.php
+│   └── database.php           # Database connection and helper functions
 ├── database/
-│   └── schema.sql
+│   └── schema.sql             # MySQL database schema with sample data
 ├── includes/
-│   └── functions.php
+│   ├── functions.php          # Utility functions and session management
+│   └── navbar.php             # Shared navigation component
 ├── pages/
-│   ├── members/
-│   ├── attendance/
-│   └── birthdays/
-├── index.php
-├── login.php
-├── dashboard.php
-└── README.md
+│   ├── members/               # Member management pages
+│   ├── attendance/            # Attendance tracking pages
+│   └── birthdays/             # Birthday management pages
+├── index.php                  # Redirects to login
+├── login.php                  # Admin authentication
+├── logout.php                 # Session logout
+├── dashboard.php              # Main dashboard with statistics
+├── members.php                # Member listing and management
+├── add_member.php             # Add new member form
+├── edit_member.php            # Edit member information
+├── view_member.php            # Detailed member view with attendance history
+├── attendance.php             # Meeting and attendance management
+├── view_attendance.php        # Detailed attendance reports
+├── birthdays.php              # Birthday tracking and management
+├── test_system.php            # System diagnostics and testing
+├── fix_admin_password.php     # Admin password reset utility
+└── README.md                  # This file
 ```
 
 ## 🚀 Installation & Setup
@@ -100,69 +112,87 @@ Then access via `http://localhost:8000`
 
 ⚠️ **Important**: Change the default password after first login!
 
+### Step 6: System Testing
+
+Run the system test to verify everything is working:
+```
+http://localhost/cms/test_system.php
+```
+
 ## 📊 Database Schema
 
 ### Tables Overview
 
-1. **admins** - Admin user credentials
-2. **members** - Church member information
-3. **meetings** - Meeting details and types
-4. **attendance** - Attendance records (junction table)
+1. **admins** - Admin user credentials with password hashing
+2. **members** - Church member information (name, location, contact, DOB)
+3. **meetings** - Meeting details and types (Sunday Service, Bible Study, etc.)
+4. **attendance** - Attendance records linking members to meetings
 
 ### Sample Data
 
 The system comes with sample data including:
-- 5 sample members
+- 1 admin user (admin/admin123)
+- 5 sample members with birthdays
 - 5 sample meetings
 - Sample attendance records
 
 ## 🎯 Usage Guide
 
-### 1. Login
-- Access the login page
+### 1. Authentication
+- Access the login page at `login.php`
 - Use default credentials or your custom admin account
+- Secure session-based authentication with automatic logout
 
 ### 2. Dashboard
-- View system overview
-- See total members count
-- Check recent attendance
-- View upcoming birthdays
+- View system overview with key statistics
+- See total members, recent attendance, upcoming birthdays
+- Quick access to all major functions
+- Real-time data updates
 
 ### 3. Member Management
-- Add new members with complete information
-- Edit existing member details
-- Delete members (with confirmation)
-- Search and filter members
+- **List Members**: View all members with search and filter options
+- **Add Members**: Complete registration form with validation
+- **Edit Members**: Update member information
+- **Delete Members**: Remove members with confirmation
+- **View Details**: See member profile with attendance history
+- **Export Data**: Download member lists as CSV
 
 ### 4. Attendance Tracking
-- Record attendance for meetings
-- View attendance history
-- Filter by date or member
+- **Create Meetings**: Add new meetings with date, type, and topic
+- **Record Attendance**: Mark members present/absent for each meeting
+- **View Reports**: Detailed attendance breakdowns
+- **Filter Meetings**: By date or meeting type
+- **Export Reports**: Print or download attendance data
 
 ### 5. Birthday Management
-- View upcoming birthdays (next 30 days)
-- Check monthly birthday lists
-- Track member ages
+- **Upcoming Birthdays**: View next 30 days of birthdays
+- **Monthly View**: Browse birthdays by month with calendar display
+- **All Birthdays**: Complete birthday list sorted by date
+- **Age Calculations**: Automatic age and countdown timers
+- **Contact Integration**: Phone/email links for birthday wishes
+- **Export Lists**: Download birthday data
 
 ## 🔒 Security Features
 
 - **Password Hashing**: Uses PHP's `password_hash()` function
-- **SQL Injection Prevention**: Prepared statements
-- **Session Security**: Secure session configuration
+- **SQL Injection Prevention**: Prepared statements throughout
+- **Session Security**: Secure session configuration with regeneration
 - **Input Sanitization**: All user inputs are sanitized
+- **Authentication Required**: All pages protected except login
 - **CSRF Protection**: Session-based token validation
 
-## 🎨 Customization
+## 🎨 User Interface
 
-### Styling
-- Edit `assets/css/style.css` for custom styling
-- Modify color scheme in CSS variables
-- Add custom Bootstrap overrides
+### Modern Design
+- **Bootstrap 5**: Responsive framework
+- **Custom CSS**: Modern gradient design with hover effects
+- **Mobile-Friendly**: Works on all device sizes
+- **Interactive Elements**: Modals, tooltips, and dynamic content
 
-### Functionality
-- Extend functions in `includes/functions.php`
-- Add new features in respective page files
-- Modify database queries as needed
+### Navigation
+- **Shared Navbar**: Consistent navigation across all pages
+- **Breadcrumbs**: Clear page hierarchy
+- **Quick Actions**: Easy access to common functions
 
 ## 📱 Responsive Design
 
@@ -180,12 +210,17 @@ The system is fully responsive and works on:
    - Ensure MySQL service is running
    - Verify database exists
 
-2. **Page Not Found (404)**
+2. **Login Issues**
+   - Run `fix_admin_password.php` to reset admin password
+   - Check if admin user exists in database
+   - Verify session configuration
+
+3. **Page Not Found (404)**
    - Check web server configuration
    - Verify file permissions
    - Ensure .htaccess is properly configured
 
-3. **Session Issues**
+4. **Session Issues**
    - Check PHP session configuration
    - Verify write permissions for session directory
 
@@ -196,6 +231,20 @@ To enable debug mode, add this to the top of PHP files:
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ```
+
+### System Testing
+
+Use the built-in system test:
+```
+http://localhost/cms/test_system.php
+```
+
+This will check:
+- PHP environment
+- File structure
+- Database connection
+- Function availability
+- Navigation links
 
 ## 🔄 Updates & Maintenance
 
@@ -230,12 +279,26 @@ For support and questions:
 - Create an issue in the repository
 - Check the troubleshooting section
 - Review the code comments
+- Run the system test for diagnostics
 
 ## 🎉 Acknowledgments
 
 - Bootstrap for the responsive framework
 - PHP community for best practices
 - MySQL documentation for database optimization
+- Font Awesome for icons
+
+## 📋 Changelog
+
+### Version 1.0.0 (Current)
+- ✅ Complete authentication system
+- ✅ Member management (CRUD operations)
+- ✅ Attendance tracking with detailed reports
+- ✅ Birthday management with multiple views
+- ✅ Responsive design and modern UI
+- ✅ Export and print functionality
+- ✅ Security features and input validation
+- ✅ System testing and diagnostics
 
 ---
 
