@@ -6,25 +6,18 @@ requireLogin();
 if (isset($_POST['delete_meeting'])) {
     $meeting_id = (int)$_POST['meeting_id'];
     
-    // Start transaction
-    beginTransaction();
+    // Delete attendance records first (foreign key constraint)
+    $delete_attendance = "DELETE FROM attendance WHERE meeting_id = ?";
+    $attendance_deleted = executeNonQuery($delete_attendance, [$meeting_id]);
     
-    try {
-        // Delete attendance records first (foreign key constraint)
-        $delete_attendance = "DELETE FROM attendance WHERE meeting_id = ?";
-        executeNonQuery($delete_attendance, [$meeting_id]);
-        
-        // Delete the meeting
-        $delete_meeting = "DELETE FROM meetings WHERE id = ?";
-        if (executeNonQuery($delete_meeting, [$meeting_id])) {
-            commitTransaction();
-            setFlashMessage('success', 'Meeting and all attendance records deleted successfully.');
-        } else {
-            throw new Exception('Error deleting meeting.');
-        }
-    } catch (Exception $e) {
-        rollbackTransaction();
-        setFlashMessage('error', 'Error deleting meeting: ' . $e->getMessage());
+    // Delete the meeting
+    $delete_meeting = "DELETE FROM meetings WHERE id = ?";
+    $meeting_deleted = executeNonQuery($delete_meeting, [$meeting_id]);
+    
+    if ($meeting_deleted) {
+        setFlashMessage('success', 'Meeting and all attendance records deleted successfully.');
+    } else {
+        setFlashMessage('error', 'Error deleting meeting. Please try again.');
     }
     
     header('Location: attendance.php');

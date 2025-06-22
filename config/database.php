@@ -123,6 +123,33 @@ function closeDBConnection() {
     mysqli_close($conn);
 }
 
+/**
+ * Begin a database transaction
+ * @return bool
+ */
+function beginTransaction() {
+    $conn = getDBConnection();
+    return mysqli_begin_transaction($conn);
+}
+
+/**
+ * Commit a database transaction
+ * @return bool
+ */
+function commitTransaction() {
+    $conn = getDBConnection();
+    return mysqli_commit($conn);
+}
+
+/**
+ * Rollback a database transaction
+ * @return bool
+ */
+function rollbackTransaction() {
+    $conn = getDBConnection();
+    return mysqli_rollback($conn);
+}
+
 // Test database connection
 function testConnection() {
     try {
