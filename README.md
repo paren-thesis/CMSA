@@ -5,12 +5,14 @@ A comprehensive church management system built with PHP, HTML, CSS, and MySQL fo
 ## 🚀 Features
 
 - **🔐 Secure Authentication**: Admin login with session management and password hashing
+- **🔄 Auto-Admin Setup**: Automatic admin account creation and password reset on login
 - **👥 Member Management**: Add, edit, delete, and view church members with search/filter
-- **📊 Attendance Tracking**: Create meetings, record attendance, and view detailed reports
-- **🎂 Birthday Management**: Track upcoming birthdays, monthly views, and age calculations
+- **📊 Attendance Tracking**: Create meetings, record attendance, view detailed reports, and delete meetings
+- **🎂 Birthday Management**: Track upcoming birthdays, monthly views, age calculations, and today's birthdays
 - **📱 Responsive Design**: Mobile-friendly interface with modern UI
 - **📈 Statistics Dashboard**: Overview of members, attendance, and birthdays
 - **📤 Export Features**: Export data to CSV and print reports
+- **🗑️ Data Management**: Delete meetings and attendance records with confirmation
 
 ## 🛠️ Technology Stack
 
@@ -40,7 +42,7 @@ CMSA/
 │   ├── attendance/            # Attendance tracking pages
 │   └── birthdays/             # Birthday management pages
 ├── index.php                  # Redirects to login
-├── login.php                  # Admin authentication
+├── login.php                  # Admin authentication with auto-setup
 ├── logout.php                 # Session logout
 ├── dashboard.php              # Main dashboard with statistics
 ├── members.php                # Member listing and management
@@ -51,7 +53,7 @@ CMSA/
 ├── view_attendance.php        # Detailed attendance reports
 ├── birthdays.php              # Birthday tracking and management
 ├── test_system.php            # System diagnostics and testing
-├── fix_admin_password.php     # Admin password reset utility
+├── fix_admin_password.php     # Admin password reset utility (backup)
 └── README.md                  # This file
 ```
 
@@ -105,7 +107,9 @@ php -S localhost:8000
 ```
 Then access via `http://localhost:8000`
 
-### Step 5: Default Login Credentials
+### Step 5: Automatic Admin Setup
+
+The system automatically creates the admin account when you first visit the login page:
 
 - **Username**: `admin`
 - **Password**: `admin123`
@@ -131,7 +135,7 @@ http://localhost/cms/test_system.php
 ### Sample Data
 
 The system comes with sample data including:
-- 1 admin user (admin/admin123)
+- 1 admin user (admin/admin123) - created automatically
 - 5 sample members with birthdays
 - 5 sample meetings
 - Sample attendance records
@@ -140,8 +144,9 @@ The system comes with sample data including:
 
 ### 1. Authentication
 - Access the login page at `login.php`
-- Use default credentials or your custom admin account
+- Admin account is automatically created on first visit
 - Secure session-based authentication with automatic logout
+- Password auto-reset if login fails
 
 ### 2. Dashboard
 - View system overview with key statistics
@@ -162,12 +167,14 @@ The system comes with sample data including:
 - **Record Attendance**: Mark members present/absent for each meeting
 - **View Reports**: Detailed attendance breakdowns
 - **Filter Meetings**: By date or meeting type
+- **Delete Meetings**: Remove meetings and all associated attendance records
 - **Export Reports**: Print or download attendance data
 
 ### 5. Birthday Management
 - **Upcoming Birthdays**: View next 30 days of birthdays
 - **Monthly View**: Browse birthdays by month with calendar display
 - **All Birthdays**: Complete birthday list sorted by date
+- **Today's Birthdays**: Special highlighting for current day birthdays
 - **Age Calculations**: Automatic age and countdown timers
 - **Contact Integration**: Phone/email links for birthday wishes
 - **Export Lists**: Download birthday data
@@ -180,6 +187,7 @@ The system comes with sample data including:
 - **Input Sanitization**: All user inputs are sanitized
 - **Authentication Required**: All pages protected except login
 - **CSRF Protection**: Session-based token validation
+- **Auto-Admin Recovery**: Automatic admin account setup and password reset
 
 ## 🎨 User Interface
 
@@ -211,7 +219,8 @@ The system is fully responsive and works on:
    - Verify database exists
 
 2. **Login Issues**
-   - Run `fix_admin_password.php` to reset admin password
+   - Admin account is automatically created on first login
+   - If issues persist, run `fix_admin_password.php` as backup
    - Check if admin user exists in database
    - Verify session configuration
 
@@ -223,6 +232,11 @@ The system is fully responsive and works on:
 4. **Session Issues**
    - Check PHP session configuration
    - Verify write permissions for session directory
+
+5. **Birthday Display Issues**
+   - Ensure date format is YYYY-MM-DD in database
+   - Check timezone settings
+   - Verify date calculations are working correctly
 
 ### Debug Mode
 
@@ -290,7 +304,15 @@ For support and questions:
 
 ## 📋 Changelog
 
-### Version 1.0.0 (Current)
+### Version 1.1.0 (Latest)
+- ✅ **Auto-Admin Setup**: Automatic admin account creation on login
+- ✅ **Improved Birthday Tracking**: Fixed today's birthday detection and countdown calculations
+- ✅ **Meeting Deletion**: Added ability to delete meetings and attendance records
+- ✅ **Enhanced Security**: Added transaction support for database operations
+- ✅ **Better Error Handling**: Improved error messages and debugging
+- ✅ **UI Improvements**: Enhanced confirmation modals and user feedback
+
+### Version 1.0.0
 - ✅ Complete authentication system
 - ✅ Member management (CRUD operations)
 - ✅ Attendance tracking with detailed reports
