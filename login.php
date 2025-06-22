@@ -3,6 +3,22 @@ require_once __DIR__ . '/includes/functions.php';
 
 startSecureSession();
 
+// Auto-fix admin password if needed
+$admin_check = fetchOne("SELECT id, password_hash FROM admins WHERE username = 'admin'");
+if (!$admin_check) {
+    // Create admin account if it doesn't exist
+    $admin_password_hash = password_hash('admin123', PASSWORD_DEFAULT);
+    $create_sql = "INSERT INTO admins (username, email, password_hash, created_at) VALUES (?, ?, ?, NOW())";
+    executeNonQuery($create_sql, ['admin', 'admin@church.com', $admin_password_hash]);
+} else {
+    // Verify password works, if not, reset it
+    if (!password_verify('admin123', $admin_check['password_hash'])) {
+        $new_password_hash = password_hash('admin123', PASSWORD_DEFAULT);
+        $update_sql = "UPDATE admins SET password_hash = ? WHERE username = 'admin'";
+        executeNonQuery($update_sql, [$new_password_hash]);
+    }
+}
+
 // Redirect if already logged in
 if (isLoggedIn()) {
     header('Location: dashboard.php');
