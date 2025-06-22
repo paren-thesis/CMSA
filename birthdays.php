@@ -196,7 +196,7 @@ include __DIR__ . '/includes/navbar.php';
                                                 <span class="text-success fw-bold">🎉 Today!</span>
                                             <?php else: ?>
                                                 <span class="<?= $is_soon ? 'text-warning fw-bold' : 'text-muted' ?>">
-                                                    <?= $days_until ?> days
+                                                    <?= $days_until ?> day(s)
                                                 </span>
                                             <?php endif; ?>
                                         </td>
