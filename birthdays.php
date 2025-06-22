@@ -142,17 +142,38 @@ include __DIR__ . '/includes/navbar.php';
                                 <?php foreach ($birthdays as $birthday): ?>
                                     <?php 
                                     $age = calculateAge($birthday['date_of_birth']);
-                                    $next_birthday = new DateTime($birthday['date_of_birth']);
-                                    $next_birthday->setDate(date('Y'), $next_birthday->format('m'), $next_birthday->format('d'));
                                     
-                                    // If birthday has passed this year, set to next year
-                                    if ($next_birthday < new DateTime()) {
-                                        $next_birthday->setDate(date('Y') + 1, $next_birthday->format('m'), $next_birthday->format('d'));
+                                    // Get today's date
+                                    $today = new DateTime();
+                                    $today->setTime(0, 0, 0); // Set to start of day
+                                    
+                                    // Create birthday date for this year
+                                    $birthday_date = new DateTime($birthday['date_of_birth']);
+                                    $this_year_birthday = new DateTime();
+                                    $this_year_birthday->setDate($today->format('Y'), $birthday_date->format('m'), $birthday_date->format('d'));
+                                    $this_year_birthday->setTime(0, 0, 0);
+                                    
+                                    // Check if today is the birthday
+                                    $is_today = ($today->format('m-d') === $birthday_date->format('m-d'));
+                                    
+                                    if ($is_today) {
+                                        $days_until = 0;
+                                    } else {
+                                        // Calculate next birthday
+                                        if ($this_year_birthday < $today) {
+                                            // Birthday has passed this year, set to next year
+                                            $next_birthday = new DateTime();
+                                            $next_birthday->setDate($today->format('Y') + 1, $birthday_date->format('m'), $birthday_date->format('d'));
+                                            $next_birthday->setTime(0, 0, 0);
+                                        } else {
+                                            // Birthday is still coming this year
+                                            $next_birthday = $this_year_birthday;
+                                        }
+                                        
+                                        $days_until = $today->diff($next_birthday)->days;
                                     }
                                     
-                                    $days_until = $next_birthday->diff(new DateTime())->days;
-                                    $is_today = $days_until === 0;
-                                    $is_soon = $days_until <= 7;
+                                    $is_soon = $days_until <= 7 && $days_until > 0;
                                     ?>
                                     <tr class="<?= $is_today ? 'table-success' : ($is_soon ? 'table-warning' : '') ?>">
                                         <td>
