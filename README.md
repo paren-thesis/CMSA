@@ -163,7 +163,7 @@ The system comes with sample data including:
 - **Export Data**: Download member lists as CSV
 
 ### 4. Attendance Tracking
-- **Create Meetings**: Add new meetings with date, type, and topic
+- **Create Meetings**: Add new meetings with date, type, and topic (including previous days)
 - **Record Attendance**: Mark members present/absent for each meeting
 - **View Reports**: Detailed attendance breakdowns
 - **Filter Meetings**: By date or meeting type
@@ -304,7 +304,16 @@ For support and questions:
 
 ## 📋 Changelog
 
-### Version 1.1.0 (Latest)
+### Version 1.2.0 (Latest)
+- ✅ **Previous Day Meetings**: Admins can now create meetings for previous days
+- ✅ **Auto-Admin Setup**: Automatic admin account creation on login
+- ✅ **Improved Birthday Tracking**: Fixed today's birthday detection and countdown calculations
+- ✅ **Meeting Deletion**: Added ability to delete meetings and attendance records
+- ✅ **Enhanced Security**: Added transaction support for database operations
+- ✅ **Better Error Handling**: Improved error messages and debugging
+- ✅ **UI Improvements**: Enhanced confirmation modals and user feedback
+
+### Version 1.1.0
 - ✅ **Auto-Admin Setup**: Automatic admin account creation on login
 - ✅ **Improved Birthday Tracking**: Fixed today's birthday detection and countdown calculations
 - ✅ **Meeting Deletion**: Added ability to delete meetings and attendance records

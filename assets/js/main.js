@@ -219,10 +219,8 @@ function initializeDatePickers() {
             input.max = new Date().toISOString().split('T')[0];
         }
         
-        // Set min date to today for meeting dates
-        if (input.name === 'meeting_date') {
-            input.min = new Date().toISOString().split('T')[0];
-        }
+        // Allow meeting dates for any date (including past dates)
+        // Removed the min date restriction to allow creating meetings for previous days
     });
 }
 

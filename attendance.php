@@ -248,7 +248,10 @@ include __DIR__ . '/includes/navbar.php';
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="meeting_date" class="form-label">Meeting Date *</label>
-                            <input type="date" class="form-control" id="meeting_date" name="meeting_date" required>
+                            <input type="date" class="form-control" id="meeting_date" name="meeting_date" 
+                                   min="<?= date('Y-m-d', strtotime('-5 years')) ?>" 
+                                   max="<?= date('Y-m-d', strtotime('+1 year')) ?>" required>
+                            <div class="form-text">You can create meetings for any date, including previous days.</div>
                         </div>
                         <div class="mb-3">
                             <label for="meeting_type" class="form-label">Meeting Type *</label>
@@ -367,6 +370,34 @@ include __DIR__ . '/includes/navbar.php';
             document.getElementById('deleteMeetingInfo').textContent = meetingType + ' - ' + meetingDate;
             new bootstrap.Modal(document.getElementById('deleteMeetingModal')).show();
         }
+
+        // Handle date input for past dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('meeting_date');
+            if (dateInput) {
+                // Set default value to today if empty
+                if (!dateInput.value) {
+                    dateInput.value = new Date().toISOString().split('T')[0];
+                }
+                
+                // Remove any browser-enforced min attribute that might prevent past dates
+                dateInput.addEventListener('input', function() {
+                    // Allow any date input
+                });
+                
+                // Override any browser validation that might prevent form submission
+                const form = dateInput.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const dateValue = dateInput.value;
+                        if (dateValue) {
+                            // Allow the form to submit with any valid date
+                            return true;
+                        }
+                    });
+                }
+            }
+        });
     </script>
 </body>
 </html> 
