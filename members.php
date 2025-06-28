@@ -20,6 +20,7 @@ $search = sanitizeInput($_GET['search'] ?? '');
 $location_filter = sanitizeInput($_GET['location'] ?? '');
 $role_filter = sanitizeInput($_GET['role'] ?? '');
 $level_filter = sanitizeInput($_GET['level'] ?? '');
+$activity_filter = sanitizeInput($_GET['activity'] ?? '');
 
 // Build query with search and filters
 $where_conditions = [];
@@ -44,6 +45,11 @@ if (!empty($role_filter)) {
 if (!empty($level_filter)) {
     $where_conditions[] = "program_level = ?";
     $params[] = $level_filter;
+}
+
+if ($activity_filter !== '') {
+    $where_conditions[] = "active = ?";
+    $params[] = $activity_filter === 'active' ? 1 : 0;
 }
 
 $where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
@@ -84,7 +90,7 @@ include __DIR__ . '/includes/navbar.php';
         <!-- Search and Filter Section -->
         <div class="search-box">
             <form method="GET" class="row g-3">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label for="search" class="form-label">Search Members</label>
                     <input type="text" class="form-control" id="search" name="search" 
                            value="<?= htmlspecialchars($search) ?>" 
@@ -126,6 +132,14 @@ include __DIR__ . '/includes/navbar.php';
                         <?php endforeach; ?>
                     </select>
                 </div>
+                <div class="col-md-2">
+                    <label for="activity" class="form-label">Filter by Activity</label>
+                    <select class="form-select" id="activity" name="activity">
+                        <option value="">All Members</option>
+                        <option value="active" <?= $activity_filter === 'active' ? 'selected' : '' ?>>Active Only</option>
+                        <option value="inactive" <?= $activity_filter === 'inactive' ? 'selected' : '' ?>>Inactive Only</option>
+                    </select>
+                </div>
                 <div class="col-md-1">
                     <label class="form-label">&nbsp;</label>
                     <button type="submit" class="btn btn-primary w-100">Search</button>
@@ -155,6 +169,7 @@ include __DIR__ . '/includes/navbar.php';
                                     <th>Role</th>
                                     <th>Location</th>
                                     <th>Program & Level</th>
+                                    <th>Activity Status</th>
                                     <th>Contact</th>
                                     <th>Email</th>
                                     <th>Date of Birth</th>
@@ -184,6 +199,15 @@ include __DIR__ . '/includes/navbar.php';
                                                     </span>
                                                 <?php endif; ?>
                                             </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge <?= getActivityBadgeClass($member['active']) ?>">
+                                                <?= getActivityStatusText($member['active']) ?>
+                                            </span>
+                                            <br>
+                                            <small class="text-muted">
+                                                <?= calculateAttendancePercentage($member['id'], 90) ?>% attendance
+                                            </small>
                                         </td>
                                         <td><?= htmlspecialchars($member['contact_number'] ?? '-') ?></td>
                                         <td><?= htmlspecialchars($member['email'] ?? '-') ?></td>

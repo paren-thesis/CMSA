@@ -30,6 +30,7 @@ CREATE TABLE members (
     program_of_study VARCHAR(100),
     program_level VARCHAR(50),
     member_role ENUM('Member', 'Executive') DEFAULT 'Member',
+    active BOOLEAN DEFAULT 0,
     contact_number VARCHAR(20),
     email VARCHAR(100),
     date_of_birth DATE,
@@ -40,7 +41,8 @@ CREATE TABLE members (
     INDEX idx_location (location),
     INDEX idx_birthday (date_of_birth),
     INDEX idx_role (member_role),
-    INDEX idx_program_level (program_level)
+    INDEX idx_program_level (program_level),
+    INDEX idx_active (active)
 );
 
 -- 3. Meetings table

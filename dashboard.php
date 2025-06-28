@@ -5,6 +5,16 @@ requireLogin();
 $totalMembers = getTotalMembers();
 $recentAttendance = getRecentAttendance(7); // Attendance in last 7 days
 $upcomingBirthdays = getUpcomingBirthdays();
+$activeMembers = getActiveMembersCount();
+$inactiveMembers = getInactiveMembersCount();
+
+// Handle bulk activity update
+if (isset($_POST['update_activity'])) {
+    $updated_count = updateAllMembersActivityStatus(90, 60); // 90 days, 60% threshold
+    setFlashMessage('success', "Activity status updated for {$updated_count} members.");
+    header('Location: dashboard.php');
+    exit();
+}
 
 // Get member statistics by role
 $roleStats = fetchAll("SELECT member_role, COUNT(*) as count FROM members GROUP BY member_role ORDER BY count DESC");
@@ -25,28 +35,47 @@ include __DIR__ . '/includes/navbar.php';
 </head>
 <body>
     <div class="container-fluid mt-4">
-        <h1 class="mb-4">Welcome, <?= htmlspecialchars($_SESSION['admin_username']) ?>!</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Welcome, <?= htmlspecialchars($_SESSION['admin_username']) ?>!</h1>
+            <form method="POST" style="display: inline;">
+                <button type="submit" name="update_activity" class="btn btn-warning">
+                    <i class="fas fa-sync-alt"></i> Update Activity Status
+                </button>
+            </form>
+        </div>
         <?php displayFlashMessage(); ?>
         <div class="row g-4 mb-4">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="dashboard-card text-center">
                     <h3>Total Members</h3>
                     <div class="number"><?= $totalMembers ?></div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <div class="dashboard-card text-center">
+                    <h3>Active Members</h3>
+                    <div class="number text-success"><?= $activeMembers ?></div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="dashboard-card text-center">
+                    <h3>Inactive Members</h3>
+                    <div class="number text-danger"><?= $inactiveMembers ?></div>
+                </div>
+            </div>
+            <div class="col-md-2">
                 <div class="dashboard-card text-center">
                     <h3>Recent Attendance (7 days)</h3>
                     <div class="number"><?= $recentAttendance ?></div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="dashboard-card text-center">
                     <h3>Upcoming Birthdays</h3>
                     <div class="number"><?= count($upcomingBirthdays) ?></div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="dashboard-card text-center">
                     <h3>Executive Members</h3>
                     <div class="number">

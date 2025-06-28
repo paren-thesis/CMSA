@@ -54,15 +54,23 @@ if (isset($_POST['record_attendance'])) {
     
     // Insert new attendance records
     $success = true;
+    $updated_members = [];
     foreach ($attendance_data as $member_id => $attended) {
         $sql = "INSERT INTO attendance (member_id, meeting_id, attended) VALUES (?, ?, ?)";
-        if (!executeNonQuery($sql, [$member_id, $meeting_id, $attended ? 1 : 0])) {
+        if (executeNonQuery($sql, [$member_id, $meeting_id, $attended ? 1 : 0])) {
+            $updated_members[] = $member_id;
+        } else {
             $success = false;
         }
     }
     
     if ($success) {
-        setFlashMessage('success', 'Attendance recorded successfully.');
+        // Update activity status for all members who had attendance recorded
+        foreach ($updated_members as $member_id) {
+            updateMemberActivityStatus($member_id, 90, 60); // 90 days, 60% threshold
+        }
+        
+        setFlashMessage('success', 'Attendance recorded successfully. Member activity status updated.');
     } else {
         setFlashMessage('error', 'Error recording attendance.');
     }

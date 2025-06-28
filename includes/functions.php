@@ -309,4 +309,99 @@ function getLevelBadgeClass($level) {
             return 'bg-light text-dark';
     }
 }
+
+/**
+ * Calculate attendance percentage for a member
+ * @param int $member_id
+ * @param int $days_back Number of days to look back (default: 90 days)
+ * @return float
+ */
+function calculateAttendancePercentage($member_id, $days_back = 90) {
+    $sql = "SELECT 
+                COUNT(m.id) as total_meetings,
+                SUM(CASE WHEN a.attended = 1 THEN 1 ELSE 0 END) as attended_meetings
+            FROM meetings m
+            LEFT JOIN attendance a ON m.id = a.meeting_id AND a.member_id = ?
+            WHERE m.meeting_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)";
+    
+    $result = fetchOne($sql, [$member_id, $days_back]);
+    
+    if ($result && $result['total_meetings'] > 0) {
+        return round(($result['attended_meetings'] / $result['total_meetings']) * 100, 1);
+    }
+    
+    return 0;
+}
+
+/**
+ * Update member activity status based on attendance percentage
+ * @param int $member_id
+ * @param int $days_back Number of days to look back (default: 90 days)
+ * @param float $threshold Minimum attendance percentage for active status (default: 60)
+ * @return bool
+ */
+function updateMemberActivityStatus($member_id, $days_back = 90, $threshold = 60) {
+    $attendance_percentage = calculateAttendancePercentage($member_id, $days_back);
+    $is_active = $attendance_percentage >= $threshold;
+    
+    $sql = "UPDATE members SET active = ? WHERE id = ?";
+    return executeNonQuery($sql, [$is_active ? 1 : 0, $member_id]);
+}
+
+/**
+ * Update activity status for all members
+ * @param int $days_back Number of days to look back (default: 90 days)
+ * @param float $threshold Minimum attendance percentage for active status (default: 60)
+ * @return int Number of members updated
+ */
+function updateAllMembersActivityStatus($days_back = 90, $threshold = 60) {
+    $members = fetchAll("SELECT id FROM members");
+    $updated_count = 0;
+    
+    foreach ($members as $member) {
+        if (updateMemberActivityStatus($member['id'], $days_back, $threshold)) {
+            $updated_count++;
+        }
+    }
+    
+    return $updated_count;
+}
+
+/**
+ * Get active members count
+ * @return int
+ */
+function getActiveMembersCount() {
+    $sql = "SELECT COUNT(*) as total FROM members WHERE active = 1";
+    $result = fetchOne($sql);
+    return $result['total'] ?? 0;
+}
+
+/**
+ * Get inactive members count
+ * @return int
+ */
+function getInactiveMembersCount() {
+    $sql = "SELECT COUNT(*) as total FROM members WHERE active = 0";
+    $result = fetchOne($sql);
+    return $result['total'] ?? 0;
+}
+
+/**
+ * Get activity badge class for styling
+ * @param bool $active
+ * @return string
+ */
+function getActivityBadgeClass($active) {
+    return $active ? 'bg-success' : 'bg-danger';
+}
+
+/**
+ * Get activity status text
+ * @param bool $active
+ * @return string
+ */
+function getActivityStatusText($active) {
+    return $active ? 'Active' : 'Inactive';
+}
 ?> 

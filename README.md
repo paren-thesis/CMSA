@@ -9,6 +9,7 @@ A comprehensive church management system built with PHP, HTML, CSS, and MySQL fo
 - **👥 Member Management**: Add, edit, delete, and view church members with search/filter
 - **🎭 Member Roles**: Executive and Member roles with visual badges and filtering
 - **📚 Program Levels**: Track academic levels (Freshman, Continuing, Final Year, Top Up) with color-coded badges
+- **✅ Activity Status**: Automatic member activity tracking based on 60% attendance threshold
 - **📊 Attendance Tracking**: Create meetings, record attendance, view detailed reports, and delete meetings
 - **🎂 Birthday Management**: Track upcoming birthdays, monthly views, age calculations, and today's birthdays
 - **📱 Responsive Design**: Mobile-friendly interface with modern UI

@@ -111,6 +111,18 @@ include __DIR__ . '/includes/navbar.php';
                             </div>
                         </div>
                         <div class="row mb-3">
+                            <div class="col-sm-4"><strong>Activity Status:</strong></div>
+                            <div class="col-sm-8">
+                                <span class="badge <?= getActivityBadgeClass($member['active']) ?>">
+                                    <?= getActivityStatusText($member['active']) ?>
+                                </span>
+                                <br>
+                                <small class="text-muted">
+                                    <?= calculateAttendancePercentage($member['id'], 90) ?>% attendance (last 90 days)
+                                </small>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
                             <div class="col-sm-4"><strong>Contact Number:</strong></div>
                             <div class="col-sm-8">
                                 <?php if (!empty($member['contact_number'])): ?>
