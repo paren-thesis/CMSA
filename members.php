@@ -18,6 +18,8 @@ if (isset($_POST['delete_member'])) {
 // Get search parameters
 $search = sanitizeInput($_GET['search'] ?? '');
 $location_filter = sanitizeInput($_GET['location'] ?? '');
+$role_filter = sanitizeInput($_GET['role'] ?? '');
+$level_filter = sanitizeInput($_GET['level'] ?? '');
 
 // Build query with search and filters
 $where_conditions = [];
@@ -34,6 +36,16 @@ if (!empty($location_filter)) {
     $params[] = $location_filter;
 }
 
+if (!empty($role_filter)) {
+    $where_conditions[] = "member_role = ?";
+    $params[] = $role_filter;
+}
+
+if (!empty($level_filter)) {
+    $where_conditions[] = "program_level = ?";
+    $params[] = $level_filter;
+}
+
 $where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
 
 // Get members
@@ -42,6 +54,12 @@ $members = fetchAll($sql, $params);
 
 // Get unique locations for filter
 $locations = fetchAll("SELECT DISTINCT location FROM members ORDER BY location");
+
+// Get unique roles for filter
+$roles = fetchAll("SELECT DISTINCT member_role FROM members WHERE member_role IS NOT NULL ORDER BY member_role");
+
+// Get unique levels for filter
+$levels = fetchAll("SELECT DISTINCT program_level FROM members WHERE program_level IS NOT NULL ORDER BY program_level");
 
 include __DIR__ . '/includes/navbar.php';
 ?>
@@ -66,13 +84,13 @@ include __DIR__ . '/includes/navbar.php';
         <!-- Search and Filter Section -->
         <div class="search-box">
             <form method="GET" class="row g-3">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="search" class="form-label">Search Members</label>
                     <input type="text" class="form-control" id="search" name="search" 
                            value="<?= htmlspecialchars($search) ?>" 
                            placeholder="Search by name, email, or phone">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label for="location" class="form-label">Filter by Location</label>
                     <select class="form-select" id="location" name="location">
                         <option value="">All Locations</option>
@@ -85,10 +103,34 @@ include __DIR__ . '/includes/navbar.php';
                     </select>
                 </div>
                 <div class="col-md-2">
+                    <label for="role" class="form-label">Filter by Role</label>
+                    <select class="form-select" id="role" name="role">
+                        <option value="">All Roles</option>
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?= htmlspecialchars($role['member_role']) ?>" 
+                                    <?= $role_filter === $role['member_role'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($role['member_role']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="level" class="form-label">Filter by Level</label>
+                    <select class="form-select" id="level" name="level">
+                        <option value="">All Levels</option>
+                        <?php foreach ($levels as $level): ?>
+                            <option value="<?= htmlspecialchars($level['program_level']) ?>" 
+                                    <?= $level_filter === $level['program_level'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($level['program_level']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-1">
                     <label class="form-label">&nbsp;</label>
                     <button type="submit" class="btn btn-primary w-100">Search</button>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <label class="form-label">&nbsp;</label>
                     <a href="members.php" class="btn btn-secondary w-100">Clear</a>
                 </div>
@@ -110,8 +152,9 @@ include __DIR__ . '/includes/navbar.php';
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Role</th>
                                     <th>Location</th>
-                                    <th>Program</th>
+                                    <th>Program & Level</th>
                                     <th>Contact</th>
                                     <th>Email</th>
                                     <th>Date of Birth</th>
@@ -125,8 +168,23 @@ include __DIR__ . '/includes/navbar.php';
                                         <td>
                                             <strong><?= htmlspecialchars($member['first_name'] . ' ' . $member['last_name']) ?></strong>
                                         </td>
+                                        <td>
+                                            <span class="badge <?= getRoleBadgeClass($member['member_role']) ?>">
+                                                <?= htmlspecialchars($member['member_role']) ?>
+                                            </span>
+                                        </td>
                                         <td><?= htmlspecialchars($member['location']) ?></td>
-                                        <td><?= htmlspecialchars($member['program_of_study'] ?? '-') ?></td>
+                                        <td>
+                                            <div>
+                                                <strong><?= htmlspecialchars($member['program_of_study'] ?? '-') ?></strong>
+                                                <?php if ($member['program_level']): ?>
+                                                    <br>
+                                                    <span class="badge <?= getLevelBadgeClass($member['program_level']) ?>">
+                                                        <?= htmlspecialchars($member['program_level']) ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
                                         <td><?= htmlspecialchars($member['contact_number'] ?? '-') ?></td>
                                         <td><?= htmlspecialchars($member['email'] ?? '-') ?></td>
                                         <td>

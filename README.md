@@ -7,10 +7,12 @@ A comprehensive church management system built with PHP, HTML, CSS, and MySQL fo
 - **🔐 Secure Authentication**: Admin login with session management and password hashing
 - **🔄 Auto-Admin Setup**: Automatic admin account creation and password reset on login
 - **👥 Member Management**: Add, edit, delete, and view church members with search/filter
+- **🎭 Member Roles**: Executive and Member roles with visual badges and filtering
+- **📚 Program Levels**: Track academic levels (Freshman, Continuing, Final Year, Top Up) with color-coded badges
 - **📊 Attendance Tracking**: Create meetings, record attendance, view detailed reports, and delete meetings
 - **🎂 Birthday Management**: Track upcoming birthdays, monthly views, age calculations, and today's birthdays
 - **📱 Responsive Design**: Mobile-friendly interface with modern UI
-- **📈 Statistics Dashboard**: Overview of members, attendance, and birthdays
+- **📈 Statistics Dashboard**: Overview of members, attendance, birthdays, and role/level breakdowns
 - **📤 Export Features**: Export data to CSV and print reports
 - **🗑️ Data Management**: Delete meetings and attendance records with confirmation
 
@@ -330,6 +332,15 @@ For support and questions:
 - ✅ Export and print functionality
 - ✅ Security features and input validation
 - ✅ System testing and diagnostics
+
+#### Available Program Levels:
+- **Freshman**: First year students
+- **Continuing (2)**: Second year continuing students
+- **Continuing (3)**: Third year continuing students
+- **Final Year (3)**: Three-year program final year students
+- **Final Year (4)**: Four-year program final year students
+- **Top Up**: Top-up program students
+- **Other**: Other educational levels
 
 ---
 

@@ -27,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'last_name' => sanitizeInput($_POST['last_name'] ?? ''),
         'location' => sanitizeInput($_POST['location'] ?? ''),
         'program_of_study' => sanitizeInput($_POST['program_of_study'] ?? ''),
+        'program_level' => sanitizeInput($_POST['program_level'] ?? ''),
+        'member_role' => sanitizeInput($_POST['member_role'] ?? 'Member'),
         'contact_number' => sanitizeInput($_POST['contact_number'] ?? ''),
         'email' => sanitizeInput($_POST['email'] ?? ''),
         'date_of_birth' => $_POST['date_of_birth'] ?? ''
@@ -53,13 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // If no errors, update database
     if (empty($errors)) {
         $sql = "UPDATE members SET first_name = ?, last_name = ?, location = ?, program_of_study = ?, 
-                contact_number = ?, email = ?, date_of_birth = ? WHERE id = ?";
+                program_level = ?, member_role = ?, contact_number = ?, email = ?, date_of_birth = ? WHERE id = ?";
         
         $params = [
             $member['first_name'],
             $member['last_name'],
             $member['location'],
             $member['program_of_study'],
+            $member['program_level'],
+            $member['member_role'],
             $member['contact_number'],
             $member['email'],
             $member['date_of_birth'] ?: null,
@@ -133,9 +137,35 @@ include __DIR__ . '/includes/navbar.php';
                             <div class="invalid-feedback">Please enter the location.</div>
                         </div>
                         <div class="col-md-6 mb-3">
+                            <label for="member_role" class="form-label">Member Role *</label>
+                            <select class="form-select" id="member_role" name="member_role" required>
+                                <?php foreach (getMemberRoles() as $key => $value): ?>
+                                    <option value="<?= htmlspecialchars($key) ?>" 
+                                            <?= $member['member_role'] === $key ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($value) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
                             <label for="program_of_study" class="form-label">Program of Study</label>
                             <input type="text" class="form-control" id="program_of_study" name="program_of_study" 
                                    value="<?= htmlspecialchars($member['program_of_study']) ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="program_level" class="form-label">Program Level</label>
+                            <select class="form-select" id="program_level" name="program_level">
+                                <option value="">Select Level</option>
+                                <?php foreach (getProgramLevels() as $key => $value): ?>
+                                    <option value="<?= htmlspecialchars($key) ?>" 
+                                            <?= $member['program_level'] === $key ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($value) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
 

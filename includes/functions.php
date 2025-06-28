@@ -243,4 +243,70 @@ function getMeetingTypes() {
         'Other' => 'Other'
     ];
 }
+
+/**
+ * Get member roles
+ * @return array
+ */
+function getMemberRoles() {
+    return [
+        'Member' => 'Member',
+        'Executive' => 'Executive'
+    ];
+}
+
+/**
+ * Get program levels
+ * @return array
+ */
+function getProgramLevels() {
+    return [
+        'Freshman' => 'Freshman',
+        'Continuing (2)' => 'Continuing (2)',
+        'Continuing (3)' => 'Continuing (3)',
+        'Final Year (3)' => 'Final Year (3)',
+        'Final Year (4)' => 'Final Year (4)',
+        'Top Up' => 'Top Up',
+        'Other' => 'Other'
+    ];
+}
+
+/**
+ * Get role badge class for styling
+ * @param string $role
+ * @return string
+ */
+function getRoleBadgeClass($role) {
+    switch ($role) {
+        case 'Executive':
+            return 'bg-primary';
+        case 'Member':
+        default:
+            return 'bg-secondary';
+    }
+}
+
+/**
+ * Get level badge class for styling
+ * @param string $level
+ * @return string
+ */
+function getLevelBadgeClass($level) {
+    switch ($level) {
+        case 'Freshman':
+            return 'bg-danger';
+        case 'Continuing (2)':
+            return 'bg-warning';
+        case 'Continuing (3)':
+            return 'bg-info';
+        case 'Final Year (3)':
+            return 'bg-success';
+        case 'Final Year (4)':
+            return 'bg-primary';
+        case 'Top Up':
+            return 'bg-secondary';
+        default:
+            return 'bg-light text-dark';
+    }
+}
 ?> 

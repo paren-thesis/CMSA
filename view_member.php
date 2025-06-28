@@ -87,8 +87,28 @@ include __DIR__ . '/includes/navbar.php';
                             <div class="col-sm-8"><?= htmlspecialchars($member['location']) ?></div>
                         </div>
                         <div class="row mb-3">
+                            <div class="col-sm-4"><strong>Member Role:</strong></div>
+                            <div class="col-sm-8">
+                                <span class="badge <?= getRoleBadgeClass($member['member_role']) ?>">
+                                    <?= htmlspecialchars($member['member_role']) ?>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
                             <div class="col-sm-4"><strong>Program of Study:</strong></div>
                             <div class="col-sm-8"><?= htmlspecialchars($member['program_of_study'] ?? 'Not specified') ?></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4"><strong>Program Level:</strong></div>
+                            <div class="col-sm-8">
+                                <?php if ($member['program_level']): ?>
+                                    <span class="badge <?= getLevelBadgeClass($member['program_level']) ?>">
+                                        <?= htmlspecialchars($member['program_level']) ?>
+                                    </span>
+                                <?php else: ?>
+                                    Not specified
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4"><strong>Contact Number:</strong></div>

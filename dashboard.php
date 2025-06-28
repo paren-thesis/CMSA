@@ -6,6 +6,12 @@ $totalMembers = getTotalMembers();
 $recentAttendance = getRecentAttendance(7); // Attendance in last 7 days
 $upcomingBirthdays = getUpcomingBirthdays();
 
+// Get member statistics by role
+$roleStats = fetchAll("SELECT member_role, COUNT(*) as count FROM members GROUP BY member_role ORDER BY count DESC");
+
+// Get member statistics by program level
+$levelStats = fetchAll("SELECT program_level, COUNT(*) as count FROM members WHERE program_level IS NOT NULL GROUP BY program_level ORDER BY count DESC");
+
 include __DIR__ . '/includes/navbar.php';
 ?>
 <!DOCTYPE html>
@@ -22,27 +28,44 @@ include __DIR__ . '/includes/navbar.php';
         <h1 class="mb-4">Welcome, <?= htmlspecialchars($_SESSION['admin_username']) ?>!</h1>
         <?php displayFlashMessage(); ?>
         <div class="row g-4 mb-4">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="dashboard-card text-center">
                     <h3>Total Members</h3>
                     <div class="number"><?= $totalMembers ?></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="dashboard-card text-center">
                     <h3>Recent Attendance (7 days)</h3>
                     <div class="number"><?= $recentAttendance ?></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="dashboard-card text-center">
                     <h3>Upcoming Birthdays</h3>
                     <div class="number"><?= count($upcomingBirthdays) ?></div>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="dashboard-card text-center">
+                    <h3>Executive Members</h3>
+                    <div class="number">
+                        <?php 
+                        $executiveCount = 0;
+                        foreach ($roleStats as $stat) {
+                            if ($stat['member_role'] === 'Executive') {
+                                $executiveCount = $stat['count'];
+                                break;
+                            }
+                        }
+                        echo $executiveCount;
+                        ?>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
-            <div class="col-lg-6 mb-4">
+            <div class="col-lg-4 mb-4">
                 <div class="card">
                     <div class="card-header">Upcoming Birthdays (Next 30 Days)</div>
                     <div class="card-body">
@@ -63,6 +86,50 @@ include __DIR__ . '/includes/navbar.php';
                     </div>
                 </div>
             </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card">
+                    <div class="card-header">Members by Role</div>
+                    <div class="card-body">
+                        <?php if (count($roleStats) > 0): ?>
+                            <ul class="list-group">
+                                <?php foreach ($roleStats as $stat): ?>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span class="badge <?= getRoleBadgeClass($stat['member_role']) ?> me-2">
+                                            <?= htmlspecialchars($stat['member_role']) ?>
+                                        </span>
+                                        <span class="fw-bold"><?= $stat['count'] ?> members</span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="text-muted">No role data available.</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card">
+                    <div class="card-header">Members by Program Level</div>
+                    <div class="card-body">
+                        <?php if (count($levelStats) > 0): ?>
+                            <ul class="list-group">
+                                <?php foreach ($levelStats as $stat): ?>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span class="badge <?= getLevelBadgeClass($stat['program_level']) ?> me-2">
+                                            <?= htmlspecialchars($stat['program_level']) ?>
+                                        </span>
+                                        <span class="fw-bold"><?= $stat['count'] ?> members</span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="text-muted">No program level data available.</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-lg-6 mb-4">
                 <div class="card">
                     <div class="card-header">Quick Links</div>
