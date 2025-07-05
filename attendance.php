@@ -5,21 +5,21 @@ requireLogin();
 // Handle meeting deletion
 if (isset($_POST['delete_meeting'])) {
     $meeting_id = (int)$_POST['meeting_id'];
-    
+
     // Delete attendance records first (foreign key constraint)
     $delete_attendance = "DELETE FROM attendance WHERE meeting_id = ?";
     $attendance_deleted = executeNonQuery($delete_attendance, [$meeting_id]);
-    
+
     // Delete the meeting
     $delete_meeting = "DELETE FROM meetings WHERE id = ?";
     $meeting_deleted = executeNonQuery($delete_meeting, [$meeting_id]);
-    
+
     if ($meeting_deleted) {
         setFlashMessage('success', 'Meeting and all attendance records deleted successfully.');
     } else {
         setFlashMessage('error', 'Error deleting meeting. Please try again.');
     }
-    
+
     header('Location: attendance.php');
     exit();
 }
@@ -29,7 +29,7 @@ if (isset($_POST['create_meeting'])) {
     $meeting_date = $_POST['meeting_date'];
     $meeting_type = sanitizeInput($_POST['meeting_type']);
     $topic = sanitizeInput($_POST['topic'] ?? '');
-    
+
     if (empty($meeting_date) || empty($meeting_type)) {
         setFlashMessage('error', 'Meeting date and type are required.');
     } else {
@@ -48,10 +48,10 @@ if (isset($_POST['create_meeting'])) {
 if (isset($_POST['record_attendance'])) {
     $meeting_id = (int)$_POST['meeting_id'];
     $attendance_data = $_POST['attendance'] ?? [];
-    
+
     // Delete existing attendance for this meeting
     executeNonQuery("DELETE FROM attendance WHERE meeting_id = ?", [$meeting_id]);
-    
+
     // Insert new attendance records
     $success = true;
     $updated_members = [];
@@ -63,13 +63,13 @@ if (isset($_POST['record_attendance'])) {
             $success = false;
         }
     }
-    
+
     if ($success) {
         // Update activity status for all members who had attendance recorded
         foreach ($updated_members as $member_id) {
             updateMemberActivityStatus($member_id, 90, 60); // 90 days, 60% threshold
         }
-        
+
         setFlashMessage('success', 'Attendance recorded successfully. Member activity status updated.');
     } else {
         setFlashMessage('error', 'Error recording attendance.');
@@ -124,6 +124,7 @@ include __DIR__ . '/includes/navbar.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -131,6 +132,7 @@ include __DIR__ . '/includes/navbar.php';
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
+
 <body>
     <div class="container-fluid mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -150,8 +152,8 @@ include __DIR__ . '/includes/navbar.php';
                     <select class="form-select" id="date" name="date">
                         <option value="">All Dates</option>
                         <?php foreach ($meeting_dates as $date): ?>
-                            <option value="<?= $date['meeting_date'] ?>" 
-                                    <?= $date_filter === $date['meeting_date'] ? 'selected' : '' ?>>
+                            <option value="<?= $date['meeting_date'] ?>"
+                                <?= $date_filter === $date['meeting_date'] ? 'selected' : '' ?>>
                                 <?= formatDate($date['meeting_date'], 'M j, Y') ?>
                             </option>
                         <?php endforeach; ?>
@@ -162,8 +164,8 @@ include __DIR__ . '/includes/navbar.php';
                     <select class="form-select" id="meeting_type" name="meeting_type">
                         <option value="">All Types</option>
                         <?php foreach ($meeting_types as $type): ?>
-                            <option value="<?= htmlspecialchars($type['meeting_type']) ?>" 
-                                    <?= $meeting_type_filter === $type['meeting_type'] ? 'selected' : '' ?>>
+                            <option value="<?= htmlspecialchars($type['meeting_type']) ?>"
+                                <?= $meeting_type_filter === $type['meeting_type'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($type['meeting_type']) ?>
                             </option>
                         <?php endforeach; ?>
@@ -213,16 +215,16 @@ include __DIR__ . '/includes/navbar.php';
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                                <button class="btn btn-outline-primary" 
-                                                        onclick="recordAttendance(<?= $meeting['id'] ?>, '<?= htmlspecialchars($meeting['meeting_type']) ?>', '<?= formatDate($meeting['meeting_date'], 'M j, Y') ?>')">
+                                                <button class="btn btn-outline-primary"
+                                                    onclick="recordAttendance(<?= $meeting['id'] ?>, '<?= htmlspecialchars($meeting['meeting_type']) ?>', '<?= formatDate($meeting['meeting_date'], 'M j, Y') ?>')">
                                                     Record Attendance
                                                 </button>
-                                                <a href="view_attendance.php?meeting_id=<?= $meeting['id'] ?>" 
-                                                   class="btn btn-outline-secondary">
+                                                <a href="view_attendance.php?meeting_id=<?= $meeting['id'] ?>"
+                                                    class="btn btn-outline-secondary">
                                                     View Details
                                                 </a>
-                                                <button class="btn btn-outline-danger" 
-                                                        onclick="confirmDelete(<?= $meeting['id'] ?>, '<?= htmlspecialchars($meeting['meeting_type']) ?>', '<?= formatDate($meeting['meeting_date'], 'M j, Y') ?>')">
+                                                <button class="btn btn-outline-danger"
+                                                    onclick="confirmDelete(<?= $meeting['id'] ?>, '<?= htmlspecialchars($meeting['meeting_type']) ?>', '<?= formatDate($meeting['meeting_date'], 'M j, Y') ?>')">
                                                     Delete
                                                 </button>
                                             </div>
@@ -256,9 +258,9 @@ include __DIR__ . '/includes/navbar.php';
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="meeting_date" class="form-label">Meeting Date *</label>
-                            <input type="date" class="form-control" id="meeting_date" name="meeting_date" 
-                                   min="<?= date('Y-m-d', strtotime('-5 years')) ?>" 
-                                   max="<?= date('Y-m-d', strtotime('+1 year')) ?>" required>
+                            <input type="date" class="form-control" id="meeting_date" name="meeting_date"
+                                min="<?= date('Y-m-d', strtotime('-5 years')) ?>"
+                                max="<?= date('Y-m-d', strtotime('+1 year')) ?>" required>
                             <div class="form-text">You can create meetings for any date, including previous days.</div>
                         </div>
                         <div class="mb-3">
@@ -372,7 +374,7 @@ include __DIR__ . '/includes/navbar.php';
             document.getElementById('meetingInfo').textContent = meetingType + ' - ' + meetingDate;
             new bootstrap.Modal(document.getElementById('recordAttendanceModal')).show();
         }
-        
+
         function confirmDelete(meetingId, meetingType, meetingDate) {
             document.getElementById('deleteMeetingId').value = meetingId;
             document.getElementById('deleteMeetingInfo').textContent = meetingType + ' - ' + meetingDate;
@@ -387,12 +389,12 @@ include __DIR__ . '/includes/navbar.php';
                 if (!dateInput.value) {
                     dateInput.value = new Date().toISOString().split('T')[0];
                 }
-                
+
                 // Remove any browser-enforced min attribute that might prevent past dates
                 dateInput.addEventListener('input', function() {
                     // Allow any date input
                 });
-                
+
                 // Override any browser validation that might prevent form submission
                 const form = dateInput.closest('form');
                 if (form) {
@@ -408,4 +410,5 @@ include __DIR__ . '/includes/navbar.php';
         });
     </script>
 </body>
-</html> 
+
+</html>
