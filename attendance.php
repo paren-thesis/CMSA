@@ -300,8 +300,21 @@ include __DIR__ . '/includes/navbar.php';
                         <div class="mb-3">
                             <h6 id="meetingInfo"></h6>
                         </div>
+                        
+                        <!-- Search Box for Members -->
+                        <div class="mb-3">
+                            <label for="memberSearch" class="form-label">Search Members</label>
+                            <input type="text" class="form-control" id="memberSearch" placeholder="Type to search members...">
+                        </div>
+                        
                         <div class="table-responsive">
-                            <table class="table table-sm">
+                            <div id="attendanceLoading" class="attendance-loading">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading attendance data...</p>
+                            </div>
+                            <table class="table table-sm" id="attendanceTableContainer" style="display: none;">
                                 <thead>
                                     <tr>
                                         <th>Member</th>
@@ -310,17 +323,7 @@ include __DIR__ . '/includes/navbar.php';
                                     </tr>
                                 </thead>
                                 <tbody id="attendanceTable">
-                                    <?php foreach ($members as $member): ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($member['first_name'] . ' ' . $member['last_name']) ?></td>
-                                            <td>
-                                                <input type="radio" name="attendance[<?= $member['id'] ?>]" value="1" checked>
-                                            </td>
-                                            <td>
-                                                <input type="radio" name="attendance[<?= $member['id'] ?>]" value="0">
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
+                                    <!-- Attendance rows will be loaded dynamically -->
                                 </tbody>
                             </table>
                         </div>
@@ -369,10 +372,82 @@ include __DIR__ . '/includes/navbar.php';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/main.js"></script>
     <script>
+        // Store all members data globally
+        const allMembers = <?= json_encode($members) ?>;
+        let currentAttendance = {};
+
         function recordAttendance(meetingId, meetingType, meetingDate) {
             document.getElementById('meetingId').value = meetingId;
             document.getElementById('meetingInfo').textContent = meetingType + ' - ' + meetingDate;
+            
+            // Load existing attendance data for this meeting
+            loadAttendanceData(meetingId);
+            
             new bootstrap.Modal(document.getElementById('recordAttendanceModal')).show();
+        }
+
+        function loadAttendanceData(meetingId) {
+            // Show loading indicator
+            document.getElementById('attendanceLoading').style.display = 'block';
+            document.getElementById('attendanceTableContainer').style.display = 'none';
+            
+            // Fetch existing attendance data via AJAX
+            fetch(`get_attendance.php?meeting_id=${meetingId}`)
+                .then(response => response.json())
+                .then(data => {
+                    currentAttendance = data.attendance || {};
+                    renderAttendanceTable(allMembers);
+                    
+                    // Hide loading and show table
+                    document.getElementById('attendanceLoading').style.display = 'none';
+                    document.getElementById('attendanceTableContainer').style.display = 'table';
+                })
+                .catch(error => {
+                    console.error('Error loading attendance:', error);
+                    currentAttendance = {};
+                    renderAttendanceTable(allMembers);
+                    
+                    // Hide loading and show table
+                    document.getElementById('attendanceLoading').style.display = 'none';
+                    document.getElementById('attendanceTableContainer').style.display = 'table';
+                });
+        }
+
+        function renderAttendanceTable(members) {
+            const tbody = document.getElementById('attendanceTable');
+            tbody.innerHTML = '';
+            
+            if (members.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="3" class="text-center text-muted">No members found matching your search.</td>';
+                tbody.appendChild(row);
+                return;
+            }
+            
+            members.forEach(member => {
+                const memberId = member.id;
+                const memberName = member.first_name + ' ' + member.last_name;
+                const isPresent = currentAttendance[memberId] !== undefined ? currentAttendance[memberId] : true; // Default to present
+                
+                const row = document.createElement('tr');
+                row.className = 'member-row';
+                row.innerHTML = `
+                    <td>${escapeHtml(memberName)}</td>
+                    <td>
+                        <input type="radio" name="attendance[${memberId}]" value="1" ${isPresent ? 'checked' : ''}>
+                    </td>
+                    <td>
+                        <input type="radio" name="attendance[${memberId}]" value="0" ${!isPresent ? 'checked' : ''}>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function confirmDelete(meetingId, meetingType, meetingDate) {
@@ -406,6 +481,19 @@ include __DIR__ . '/includes/navbar.php';
                         }
                     });
                 }
+            }
+
+            // Handle member search
+            const memberSearch = document.getElementById('memberSearch');
+            if (memberSearch) {
+                memberSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const filteredMembers = allMembers.filter(member => {
+                        const fullName = (member.first_name + ' ' + member.last_name).toLowerCase();
+                        return fullName.includes(searchTerm);
+                    });
+                    renderAttendanceTable(filteredMembers);
+                });
             }
         });
     </script>

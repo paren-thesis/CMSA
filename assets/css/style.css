@@ -252,6 +252,39 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Attendance Modal Search */
+#memberSearch {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#memberSearch:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.member-row {
+    transition: background-color 0.2s ease;
+}
+
+.member-row:hover {
+    background-color: #f8f9fa;
+}
+
+/* Loading indicator for attendance modal */
+.attendance-loading {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+}
+
+.attendance-loading .spinner-border {
+    width: 2rem;
+    height: 2rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container-fluid {

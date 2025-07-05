@@ -53,6 +53,7 @@ CMSA/
 ├── edit_member.php            # Edit member information
 ├── view_member.php            # Detailed member view with attendance history
 ├── attendance.php             # Meeting and attendance management
+├── get_attendance.php         # AJAX endpoint for attendance data
 ├── view_attendance.php        # Detailed attendance reports
 ├── birthdays.php              # Birthday tracking and management
 ├── test_system.php            # System diagnostics and testing
@@ -167,7 +168,9 @@ The system comes with sample data including:
 
 ### 4. Attendance Tracking
 - **Create Meetings**: Add new meetings with date, type, and topic (including previous days)
-- **Record Attendance**: Mark members present/absent for each meeting
+- **Record Attendance**: Mark members present/absent for each meeting with search functionality
+- **Edit Attendance**: Load existing attendance data when editing meetings
+- **Member Search**: Search and filter members in attendance recording popup
 - **View Reports**: Detailed attendance breakdowns
 - **Filter Meetings**: By date or meeting type
 - **Delete Meetings**: Remove meetings and all associated attendance records
