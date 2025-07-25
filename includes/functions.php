@@ -24,7 +24,7 @@ function startSecureSession() {
  */
 function isLoggedIn() {
     startSecureSession();
-    return isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id']);
+    return isset($_SESSION['admin_id']) && isset($_SESSION['admin_username']);
 }
 
 /**
@@ -32,6 +32,16 @@ function isLoggedIn() {
  */
 function requireLogin() {
     if (!isLoggedIn()) {
+        // Clear session for safety
+        $_SESSION = array();
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params['path'], $params['domain'],
+                $params['secure'], $params['httponly']
+            );
+        }
+        session_destroy();
         header('Location: login.php');
         exit();
     }
@@ -42,6 +52,14 @@ function requireLogin() {
  */
 function logout() {
     startSecureSession();
+    $_SESSION = array();
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params['path'], $params['domain'],
+            $params['secure'], $params['httponly']
+        );
+    }
     session_destroy();
     header('Location: login.php');
     exit();

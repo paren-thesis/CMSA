@@ -427,7 +427,7 @@ include __DIR__ . '/includes/navbar.php';
             members.forEach(member => {
                 const memberId = member.id;
                 const memberName = member.first_name + ' ' + member.last_name;
-                const isPresent = currentAttendance[memberId] !== undefined ? currentAttendance[memberId] : true; // Default to present
+                const isPresent = currentAttendance[memberId] !== undefined ? currentAttendance[memberId] : false; // Default to absent
                 
                 const row = document.createElement('tr');
                 row.className = 'member-row';
